@@ -10,3 +10,6 @@ storage/logs/*
 bootstrap/cache/*
 .idea/
 .vscode/
+
+storage/app/geo/*
+!storage/app/geo/.gitkeep
