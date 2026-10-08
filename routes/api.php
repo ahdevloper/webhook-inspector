@@ -1,3 +1,22 @@
 <?php
-use App\Http\Controllers\Api\EndpointController;use App\Http\Controllers\Api\RequestController;use Illuminate\Support\Facades\Route;
-Route::middleware(['web','auth'])->group(function(){Route::apiResource('endpoints',EndpointController::class);Route::post('endpoints/{endpoint}/regenerate-token',[EndpointController::class,'regenerate']);Route::get('endpoints/{endpoint}/requests',[EndpointController::class,'requests']);Route::get('requests/{requestModel}',[RequestController::class,'show']);Route::post('requests/{requestModel}/replay',[RequestController::class,'replay']);});
+use App\Http\Controllers\Api\EndpointController;
+use App\Http\Controllers\Api\RequestController;
+use App\Http\Controllers\Api\GeoController;
+use Illuminate\Support\Facades\Route;
+Route::middleware(['web','auth'])->group(function(){
+ Route::apiResource('endpoints',EndpointController::class);
+ Route::post('endpoints/{endpoint}/regenerate-token',[EndpointController::class,'regenerate']);
+ Route::get('endpoints/{endpoint}/requests',[EndpointController::class,'requests']);
+ Route::get('requests/{requestModel}',[RequestController::class,'show']);
+ Route::post('requests/{requestModel}/replay',[RequestController::class,'replay']);
+});
+Route::prefix('countries')->group(function(){
+ Route::get('/',[GeoController::class,'countries']);
+ Route::get('/{country}/cities',[GeoController::class,'countryCities']);
+ Route::get('/{country}',[GeoController::class,'country']);
+});
+Route::prefix('cities')->group(function(){
+ Route::get('/search',[GeoController::class,'search']);
+ Route::get('/nearby',[GeoController::class,'nearby']);
+ Route::get('/',[GeoController::class,'cities']);
+});
