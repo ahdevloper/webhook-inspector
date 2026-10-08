@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration {public function up():void{Schema::create('webhook_replays',function(Blueprint $t){$t->id();$t->foreignId('webhook_request_id')->constrained()->cascadeOnDelete();$t->text('target_url');$t->string('method',10);$t->json('headers')->nullable();$t->json('payload')->nullable();$t->unsignedSmallInteger('response_status')->nullable();$t->json('response_headers')->nullable();$t->longText('response_body')->nullable();$t->unsignedInteger('duration_ms')->nullable();$t->timestamp('executed_at')->index();$t->timestamps();});}public function down():void{Schema::dropIfExists('webhook_replays');}};
