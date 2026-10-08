@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;use App\Http\Requests\ReplayRequest;use App\Models\WebhookRequest;use App\Services\ReplayService;use Illuminate\Http\JsonResponse;
+class RequestController extends Controller {public function show(WebhookRequest $requestModel):JsonResponse{$this->authorize('view',$requestModel);return response()->json($requestModel->load('replays'));}public function replay(ReplayRequest $request,WebhookRequest $requestModel,ReplayService $service):JsonResponse{$this->authorize('view',$requestModel);return response()->json($service->execute($requestModel,$request->string('target_url')->toString(),$request->input('headers',[]),$request->input('payload')),201);}}
