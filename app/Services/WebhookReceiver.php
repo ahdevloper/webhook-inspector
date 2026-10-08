@@ -1,0 +1,4 @@
+<?php
+namespace App\Services;
+use App\Models\WebhookEndpoint;use App\Models\WebhookRequest;use Illuminate\Http\Request;use Illuminate\Support\Str;use Symfony\Component\HttpKernel\Exception\PayloadTooLargeHttpException;
+class WebhookReceiver {public function capture(WebhookEndpoint $e,Request $r):WebhookRequest{abort_unless($e->enabled,404);$raw=$r->getContent();if(strlen($raw)>(int)config('webhook.max_body_bytes',1048576))throw new PayloadTooLargeHttpException;$json=null;if(str_contains(strtolower((string)$r->header('content-type')),'application/json')){$d=json_decode($raw,true);$json=json_last_error()===JSON_ERROR_NONE?$d:null;}return $e->requests()->create(['method'=>$r->method(),'headers'=>$r->headers->all(),'query'=>$r->query(),'raw_body'=>$raw,'json_body'=>$json,'ip_address'=>$r->ip(),'user_agent'=>$r->userAgent(),'request_size'=>strlen($raw),'received_at'=>now()]);}public function token():string{return Str::random(64);}}
