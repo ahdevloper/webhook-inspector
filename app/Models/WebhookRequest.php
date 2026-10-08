@@ -1,0 +1,4 @@
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;use Illuminate\Database\Eloquent\Relations\BelongsTo;use Illuminate\Database\Eloquent\Relations\HasMany;
+class WebhookRequest extends Model {use HasFactory;protected $fillable=['webhook_endpoint_id','method','headers','query','raw_body','json_body','ip_address','user_agent','request_size','received_at'];protected $casts=['headers'=>'array','query'=>'array','json_body'=>'array','received_at'=>'datetime'];public function endpoint():BelongsTo{return $this->belongsTo(WebhookEndpoint::class,'webhook_endpoint_id');}public function replays():HasMany{return $this->hasMany(WebhookReplay::class);}}
