@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration {public function up():void{Schema::create('webhook_endpoints',function(Blueprint $t){$t->id();$t->foreignId('user_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('token',96)->unique();$t->boolean('enabled')->default(true);$t->timestamps();$t->index(['user_id','enabled']);});}public function down():void{Schema::dropIfExists('webhook_endpoints');}};
