@@ -1,0 +1,4 @@
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;use Illuminate\Database\Eloquent\Relations\BelongsTo;
+class WebhookReplay extends Model {use HasFactory;protected $fillable=['webhook_request_id','target_url','method','headers','payload','response_status','response_headers','response_body','duration_ms','executed_at'];protected $casts=['headers'=>'array','payload'=>'array','response_headers'=>'array','executed_at'=>'datetime'];public function request():BelongsTo{return $this->belongsTo(WebhookRequest::class,'webhook_request_id');}}
