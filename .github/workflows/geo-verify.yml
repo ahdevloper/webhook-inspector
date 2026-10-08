@@ -1,0 +1,29 @@
+name: Geographic dataset verification
+on:
+  push:
+    paths:
+      - 'app/Services/GeoDataImporter.php'
+      - 'app/Console/Commands/GeoImportCommand.php'
+      - 'database/migrations/2026_10_08_000004_create_countries_table.php'
+      - 'database/migrations/2026_10_08_000005_create_cities_table.php'
+      - '.github/workflows/geo-verify.yml'
+  workflow_dispatch:
+jobs:
+  import-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, sqlite3, pdo_sqlite, zip, dom, iconv
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: touch database/database.sqlite
+      - run: php artisan migrate --force
+      - run: php artisan geo:import
+      - run: |
+          php artisan tinker --execute="echo 'Countries imported: '.\App\Models\Country::count().PHP_EOL; echo 'Cities imported: '.\App\Models\City::count().PHP_EOL;"
+      - run: php artisan test
+      - run: php artisan pint --test
