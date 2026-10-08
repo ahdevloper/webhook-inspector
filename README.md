@@ -89,3 +89,45 @@ php artisan pint --test
 ## License
 
 MIT
+
+## Global geographic data
+
+The project includes a full geographic-data import pipeline based on GeoNames rather than a hand-maintained city list.
+
+- Countries: imported from the GeoNames countryInfo.txt dump.
+- Populated places: imported from the worldwide allCountries.zip dump by selecting every feature-class P record. This includes cities, towns, villages, localities, administrative seats and related populated-place records.
+- Regional classification: enriched from the United Nations M49 country/area classification.
+- Search: name, English name, ASCII/transliterated name and alternate names.
+- Nearby search: latitude/longitude radius query.
+- Pagination and search-result caching are enabled for API reads.
+- The raw worldwide dump is not committed because it is large and changes frequently; it is downloaded into storage/app/geo by the importer.
+
+### Geographic commands
+
+php artisan geo:import
+php artisan geo:import --countries-only
+php artisan geo:import --cities-only
+php artisan geo:update
+
+The import process downloads the source, validates rows and coordinates, normalizes fields, maps countries, upserts by GeoNames ID, creates database indexes through migrations, and prints import statistics.
+
+### Geographic API
+
+- GET /api/countries
+- GET /api/countries/{id}
+- GET /api/countries/{id}/cities
+- GET /api/cities
+- GET /api/cities/search?q=riyadh
+- GET /api/cities/nearby?lat=24.7136&lng=46.6753&radius=25
+
+### Source and licensing
+
+GeoNames publishes its data under Creative Commons Attribution 4.0 and permits commercial use with attribution. The worldwide dump is updated regularly. UN M49 is used only for country/region classification. Natural Earth was evaluated as a supplementary source but was not selected as the primary city dataset because GeoNames provides substantially broader populated-place coverage.
+
+At the time this geographic integration was implemented, GeoNames reported 5,231,938 populated-place records across feature class P and more than 13 million total geographic names/features. The application's own geo:import report is authoritative for the exact rows imported into its current database snapshot; source counts can change as GeoNames is updated.
+
+### Geographic schema
+
+countries stores ISO identifiers, numeric code, continent, M49 region/subregion, capital, coordinates, timezone, phone code, currency and source metadata.
+
+cities stores GeoNames ID, country, names, ASCII name, coordinates, population, feature code, administrative codes, timezone, elevation, alternate names and source metadata.
