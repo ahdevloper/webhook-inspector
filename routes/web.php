@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Support\Facades\Route;
+Route::view('/','dashboard')->name('dashboard');Route::get('/login',fn()=>view('login'))->name('login');Route::post('/login',function(\Illuminate\Http\Request $r){$c=$r->validate(['email'=>'required|email','password'=>'required']);if(!auth()->attempt($c))return back()->withErrors(['email'=>'Invalid credentials.']);$r->session()->regenerate();return redirect('/');})->name('login.store');Route::post('/logout',function(\Illuminate\Http\Request $r){auth()->logout();$r->session()->invalidate();return redirect('/login');})->name('logout');
